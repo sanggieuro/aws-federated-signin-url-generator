@@ -14,7 +14,7 @@ This project provides a simple Flask web application that generates an AWS Manag
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/aws-federated-signin-url-generator.git
+    git clone https://github.com/sanggieuro/aws-federated-signin-url-generator.git
     cd aws-federated-signin-url-generator
     ```
 
