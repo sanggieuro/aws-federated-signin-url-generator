@@ -9,7 +9,16 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 def get_federation_token(key_id, secret_key):
-   
+    """
+    Obtain a federation token from AWS STS (Security Token Service).
+
+    Args:
+        key_id (str): AWS access key ID.
+        secret_key (str): AWS secret access key.
+
+    Returns:
+        dict: Response from AWS STS containing the federation token or an error message if credentials are invalid.
+    """
     session = boto3.Session(
         aws_access_key_id=key_id,
         aws_secret_access_key=secret_key
@@ -19,15 +28,15 @@ def get_federation_token(key_id, secret_key):
 
     try:
         response = client.get_federation_token(
-                Name="IntelBrokers",
-                Policy=json.dumps({
-                    'Version': '2012-10-17',
-                    'Statement': [{
-                        'Effect': 'Allow',
-                        'Action': '*',
-                        'Resource': '*'
-                    }]
-                })
+            Name="IntelBrokers",
+            Policy=json.dumps({
+                'Version': '2012-10-17',
+                'Statement': [{
+                    'Effect': 'Allow',
+                    'Action': '*',
+                    'Resource': '*'
+                }]
+            })
         )
     except Exception as e:
         return jsonify({
@@ -39,7 +48,15 @@ def get_federation_token(key_id, secret_key):
     return response
 
 def generate_signin_url(fed_response):
+    """
+    Generate a sign-in URL for the AWS Management Console using the federation token.
 
+    Args:
+        fed_response (dict): Response from AWS STS containing the federation token.
+
+    Returns:
+        str: AWS Management Console sign-in URL or an error message.
+    """
     try:
         params = {
             'Action': 'getSigninToken',
@@ -68,12 +85,16 @@ def generate_signin_url(fed_response):
 
 @app.route("/", methods=["GET"])
 def get_token_link_json():
-    
-    # get key_id and secret_key
+    """
+    Flask route to get a sign-in URL for the AWS Management Console.
+
+    Returns:
+        Response: JSON response containing the sign-in URL or an error message.
+    """
     get_aws_access_key_id = request.args.get('key_id')
     get_aws_secret_access_key = request.args.get('secret_key')
 
-    if(get_aws_access_key_id is not None and get_aws_secret_access_key is not None):
+    if get_aws_access_key_id is not None and get_aws_secret_access_key is not None:
         try:
             federation_response = get_federation_token(get_aws_access_key_id, get_aws_secret_access_key)
             signin_url = generate_signin_url(federation_response)
