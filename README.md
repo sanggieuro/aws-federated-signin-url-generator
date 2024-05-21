@@ -1,6 +1,7 @@
 # AWS Federated Sign-In URL Generator
 
 This project provides a simple Flask web application that generates an AWS Management Console sign-in URL using AWS STS (Security Token Service) federation tokens. Users can obtain a sign-in URL by providing their AWS access key ID and secret access key.
+This program was created for my clients who are asking me everyone for a new link for generating an AWS link.
 
 ## Prerequisites
 
